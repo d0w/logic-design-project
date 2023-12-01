@@ -46,7 +46,7 @@ module top(
     wire [6:0] c_seg, h_seg; // current score segments
     wire [7:0] c_anode, h_anode; // high score segments
     
-    wire [8:0] curr_score, highest_score; // current score bits
+    wire [8:0] curr_score, highest_score; //p2_score; // current score bits                KLin
     wire slow_clk; // 7-segment clock 
     
     wire endgame; // game over flag
@@ -55,7 +55,7 @@ module top(
     clock_divider #(.DIVISOR(500000)) clk600Hz(.clk_in(CLK), .clk_out(slow_clk));  // create 200 Hz clock for seven segment display
     
     game pong(.mode(mode), .CLK(CLK), .BTN_LR(BTN_LR), .VGA_HS(vga_hs), .VGA_VS(vga_vs), 
-    .VGA_R(vga_r), .VGA_G(vga_g), .VGA_B(vga_b), .endgame(endgame), .score(curr_score)); // initialize pong game
+    .VGA_R(vga_r), .VGA_G(vga_g), .VGA_B(vga_b), .endgame(endgame), .score(curr_score)); //.score2(highest_score)); // initialize pong game           KLin
     
     menu_screen(.mode(mode), .CLK(CLK), .VGA_HS(vga_h_start), .VGA_VS(vga_v_start), 
     .VGA_R(vga_r_start), .VGA_G(vga_g_start), .VGA_B(vga_b_start)); // start menu driver
@@ -65,6 +65,7 @@ module top(
             
     score_to_7seg current(.clk(slow_clk), .currscore(curr_score), .anode(c_anode), .segment(c_seg)); // current score to 7-segment display
     score_to_7seg highest(.clk(slow_clk), .currscore(highest_score), .anode(h_anode), .segment(h_seg)); // high score to 7-segment display
+    //score_to_7seg score2(.clk(slow_clk), .currscore(highest_score), .anode(h_anode), .segment(h_seg));                                            KLin
     
     increment_one change_mode(.CLK(CLK), .btn(BTNC), .duty(mode)); // change mode
     
