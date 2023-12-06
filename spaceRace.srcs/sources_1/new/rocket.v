@@ -41,7 +41,8 @@ module rocket
     output reg [11:0] o_y1,  // square top edge
     output reg [11:0] o_y2,   // square bottom edge
     output wire active,     // active button flag
-    output wire [1:0] com  // paddle direction
+    output wire [1:0] com,  // paddle direction
+    output wire [3:0] lives //lives
     );
     
     assign com = BTN_DIR; // pass paddle direction to output
