@@ -31,7 +31,8 @@ module game(
     output reg [3:0] VGA_G, // green channels
     output reg [3:0] VGA_B, // blue channels
     output wire endgame, // game end flag
-    output wire [8:0] score
+    output wire [8:0] lives1, lives2
+    
     );
     
     localparam RW = 5; // rocket width
@@ -95,7 +96,8 @@ module game(
         .o_y1(sq_b_y1),
         .o_y2(sq_b_y2),
         .active(active),
-        .com(com)
+        .com(com),
+        .lives(lives1)
         ); // rocket instance
         
       rocket2 #(.P_WIDTH(RW), .P_HEIGHT(RH), .IX(480), .IY(RY)) R2(
@@ -109,7 +111,8 @@ module game(
         .o_y1(sq_c_y1),
         .o_y2(sq_c_y2),
         .active(active1),
-        .com(com1)
+        .com(com1),
+        .lives(lives2)
         ); // rocket instance
         
     ball #(.RY(RY), .RH(RH), .IX(IX), .IY(IY), .H_SIZE(B_SIZE)) b0 (
