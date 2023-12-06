@@ -20,7 +20,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module rocket
+module rocket2
 #(
     P_WIDTH=5,     // half the paddle width
     P_HEIGHT=10,     // half the paddle height     

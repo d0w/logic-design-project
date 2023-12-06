@@ -23,7 +23,8 @@
 module game(
     input wire mode,
     input wire CLK, // 100 Mhz clock
-    input wire [1:0] BTN_LR, // left and right buttons
+    input wire [1:0] BTN_LU, // left and up buttons
+    input wire [1:0] BTN_DR, // left and up buttons
     output wire VGA_HS, // horizontal sync
     output wire VGA_VS, // vertical sync
     output reg [3:0] VGA_R, // red channels
@@ -40,7 +41,7 @@ module game(
     
     localparam IX = 320; // intial ball x
     localparam IY = 470 - RH - RH - 30; //initial ball y
-    localparam B_SIZE = 20; // ball size
+    localparam B_SIZE = 10; // ball size
     
     reg [15:0] cnt = 0; // pixel clock counter
     reg pix_stb = 0; // pixel clock
@@ -51,10 +52,10 @@ module game(
     wire collide; // collision flag
     
     //reg sq_a, sq_b, sq_c, sq_d, sq_e, sq_f, sq_g, sq_h; // registers to assign objects
-    reg sq_b; // register for rocket
-    //wire [11:0] sq_a_x1, sq_a_x2, sq_a_y1, sq_a_y2; // positions bits for ball
+    reg sq_a, sq_b, sq_c; // register for rocket
+    wire [11:0] sq_a_x1, sq_a_x2, sq_a_y1, sq_a_y2; // positions bits for ball
     wire [11:0] sq_b_x1, sq_b_x2, sq_b_y1, sq_b_y2; // position bits for rocket
-    //wire [11:0] sq_c_x1, sq_c_x2, sq_c_y1, sq_c_y2; // positions bits for decoy
+    wire [11:0] sq_c_x1, sq_c_x2, sq_c_y1, sq_c_y2; // positions bits for decoy
     //wire [11:0] sq_d_x1, sq_d_x2, sq_d_y1, sq_d_y2; // positions bits for decoy
     //wire [11:0] sq_e_x1, sq_e_x2, sq_e_y1, sq_e_y2; // positions bits for decoy
     //wire [11:0] sq_f_x1, sq_f_x2, sq_f_y1, sq_f_y2; // position bits for decoy
@@ -62,8 +63,10 @@ module game(
     //wire [11:0] sq_h_x1, sq_h_x2, sq_h_y1, sq_h_y2; // positions bits for decoy
 
     
+    wire active1;
     wire active; // active flag during game over sequence
     wire [1:0] com; // bits to check rocket direction
+    wire [1:0] com1; // bits to check rocket direction
            
     always @(posedge CLK)
     begin
@@ -81,37 +84,51 @@ module game(
         .o_animate(animate)
     ); // vga 640x480 driver
             
-    rocket #(.P_WIDTH(RW), .P_HEIGHT(RH), .IX(RX), .IY(RY)) R(
+    rocket #(.P_WIDTH(RW), .P_HEIGHT(RH), .IX(RX), .IY(RY)) R1(
         .endgame(endgame|!mode),
         .i_clk(CLK), 
         .i_ani_stb(pix_stb),
         .i_animate(animate),
-        .BTN_LR(BTN_LR),
+        .BTN_DIR(BTN_LU),
         .o_x1(sq_b_x1),
         .o_x2(sq_b_x2),
         .o_y1(sq_b_y1),
         .o_y2(sq_b_y2),
         .active(active),
         .com(com)
-        ); // paddle instance
+        ); // rocket instance
         
-//    square #(.PY(PY), .PH(PH), .IX(IX), .IY(IY), .H_SIZE(B_SIZE)) b0 (
-//        .toggle(1),
-//        .com(com),
-//        .mode(mode),
-//        .start(active),
-//        .i_x1(sq_b_x1),
-//        .i_x2(sq_b_x2),
-//        .i_clk(CLK), 
-//        .i_ani_stb(pix_stb),
-//        .i_animate(animate),
-//        .o_x1(sq_a_x1),
-//        .o_x2(sq_a_x2),
-//        .o_y1(sq_a_y1),
-//        .o_y2(sq_a_y2),
-//        .endgame(endgame),
-//        .score(score)
-//    ); // ball instance
+      rocket2 #(.P_WIDTH(RW), .P_HEIGHT(RH), .IX(480), .IY(RY)) R2(
+        .endgame(endgame|!mode),
+        .i_clk(CLK), 
+        .i_ani_stb(pix_stb),
+        .i_animate(animate),
+        .BTN_DIR(BTN_DR),
+        .o_x1(sq_c_x1),
+        .o_x2(sq_c_x2),
+        .o_y1(sq_c_y1),
+        .o_y2(sq_c_y2),
+        .active(active1),
+        .com(com1)
+        ); // rocket instance
+        
+    ball #(.RY(RY), .RH(RH), .IX(IX), .IY(IY), .H_SIZE(B_SIZE)) b0 (
+        .toggle(1),
+        .com(com),
+        .mode(mode),
+        .start(active),
+        .i_x1(sq_b_x1),
+        .i_x2(sq_b_x2),
+        .i_clk(CLK), 
+        .i_ani_stb(pix_stb),
+        .i_animate(animate),
+        .o_x1(sq_a_x1),
+        .o_x2(sq_a_x2),
+        .o_y1(sq_a_y1),
+        .o_y2(sq_a_y2),
+        .endgame(endgame),
+        .score(score)
+    ); // ball instance
     
 //    square #(.PY(PY), .PH(PH), .IX(30), .IY(340), .H_SIZE(B_SIZE)) b1 (
 //        .toggle(0),
@@ -211,9 +228,9 @@ module game(
     
     always @ (*)
     begin
-            //sq_a = ((x > sq_a_x1) & (y > sq_a_y1) & (x < sq_a_x2) & (y < sq_a_y2)) ? 1 : 0; // draw ball edges
+            sq_a = ((x > sq_a_x1) & (y > sq_a_y1) & (x < sq_a_x2) & (y < sq_a_y2)) ? 1 : 0; // draw ball edges
             sq_b = ((x > sq_b_x1) & (y > sq_b_y1) & (x < sq_b_x2) & (y < sq_b_y2)) ? 1 : 0; // draw rocket edges
-//            sq_c = ((x > sq_c_x1) & (y > sq_c_y1) & (x < sq_c_x2) & (y < sq_c_y2)) ? 1 : 0; // draw ball edges
+            sq_c = ((x > sq_c_x1) & (y > sq_c_y1) & (x < sq_c_x2) & (y < sq_c_y2)) ? 1 : 0; // draw ball edges
 //            sq_d = ((x > sq_d_x1) & (y > sq_d_y1) & (x < sq_d_x2) & (y < sq_d_y2)) ? 1 : 0; // draw ball edges
 //            sq_e = ((x > sq_e_x1) & (y > sq_e_y1) & (x < sq_e_x2) & (y < sq_e_y2)) ? 1 : 0; // draw ball edges
 //            sq_f = ((x > sq_f_x1) & (y > sq_f_y1) & (x < sq_f_x2) & (y < sq_f_y2)) ? 1 : 0; // draw ball edges
@@ -236,18 +253,18 @@ module game(
 //        VGA_R[0] <= sq_a | sq_b | (sq_c & score>10) | (sq_d & score>20) | (sq_e & score > 30) | (sq_f & score > 40) | (sq_g & score > 50) | (sq_h & score > 60);
 //        VGA_G[0] <= sq_a | sq_b | (sq_c & score>10) | (sq_d & score>20) | (sq_e & score > 30) | (sq_f & score > 40) | (sq_g & score > 50) | (sq_h & score > 60);
 //        VGA_B[0] <= sq_a | sq_b | (sq_c & score>10) | (sq_d & score>20) | (sq_e & score > 30) | (sq_f & score > 40) | (sq_g & score > 50) | (sq_h & score > 60);
-          VGA_R[3] <= sq_b;
-          VGA_G[3] <= sq_b;
-          VGA_B[3] <= sq_b;
-          VGA_R[2] <= sq_b;
-          VGA_G[2] <= sq_b;
-          VGA_B[2] <= sq_b;
-          VGA_R[1] <= sq_b;
-          VGA_G[1] <= sq_b;
-          VGA_B[1] <= sq_b;
-          VGA_R[0] <= sq_b;
-          VGA_G[0] <= sq_b;
-          VGA_B[0] <= sq_b;
+          VGA_R[3] <= sq_a | sq_b | sq_c;
+          VGA_G[3] <= sq_a | sq_b| sq_c;
+          VGA_B[3] <= sq_a | sq_b| sq_c;
+          VGA_R[2] <= sq_a | sq_b| sq_c;
+          VGA_G[2] <= sq_a | sq_b| sq_c;
+          VGA_B[2] <= sq_a | sq_b| sq_c;
+          VGA_R[1] <= sq_a | sq_b| sq_c;
+          VGA_G[1] <= sq_a | sq_b| sq_c;
+          VGA_B[1] <= sq_a | sq_b| sq_c;
+          VGA_R[0] <= sq_a | sq_b| sq_c;
+          VGA_G[0] <= sq_a | sq_b| sq_c;
+          VGA_B[0] <= sq_a | sq_b| sq_c;
     end
 endmodule
 
