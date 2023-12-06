@@ -47,7 +47,7 @@ module top(
     wire [6:0] c_seg, h_seg; // current score segments
     wire [7:0] c_anode, h_anode; // high score segments
     
-    wire [8:0] curr_score, highest_score; // current score bits
+    wire [8:0] p1Lives = 5, p2Lives = 5; // current score bits
     wire slow_clk; // 7-segment clock 
     
     wire endgame; // game over flag
@@ -57,7 +57,7 @@ module top(
     clock_divider #(.DIVISOR(500000)) clk600Hz(.clk_in(CLK), .clk_out(slow_clk));  // create 200 Hz clock for seven segment display
     
     game spaceRace(.mode(mode), .CLK(CLK), .BTN_LU(BTN_LU), .BTN_DR(BTN_DR), .VGA_HS(vga_hs), .VGA_VS(vga_vs), 
-    .VGA_R(vga_r), .VGA_G(vga_g), .VGA_B(vga_b), .endgame(endgame), .score(curr_score)); // initialize pong game
+    .VGA_R(vga_r), .VGA_G(vga_g), .VGA_B(vga_b), .endgame(endgame), .lives1(p1Lives), .lives2(p2Lives)); // initialize pong game
     
 //    menu_screen(.mode(mode), .CLK(CLK), .VGA_HS(vga_h_start), .VGA_VS(vga_v_start), 
 //    .VGA_R(vga_r_start), .VGA_G(vga_g_start), .VGA_B(vga_b_start)); // start menu driver
@@ -65,8 +65,9 @@ module top(
     //bg_gen #(.MEMFILE("gameover.mem"), .PALETTE("gameover_palette.mem")) end_screen(.CLK(CLK), .RST_BTN(RST_BTN), .VGA_HS(vga_h_end), 
    // .VGA_VS(vga_v_end), .VGA_R(vga_r_end), .VGA_G(vga_g_end), .VGA_B(vga_b_end)); // game over menu driver
             
-//    score_to_7seg current(.clk(slow_clk), .currscore(curr_score), .anode(c_anode), .segment(c_seg)); // current score to 7-segment display
-//    score_to_7seg highest(.clk(slow_clk), .currscore(highest_score), .anode(h_anode), .segment(h_seg)); // high score to 7-segment display
+    score_to_7seg p1(.clk(slow_clk), .currscore(p1Lives), .anode(c_anode), .segment(c_seg)); // current score to 7-segment display
+    
+    score_to_7seg2 p2(.clk(slow_clk), .currscore(p2Lives), .anode(h_anode), .segment(h_seg)); // high score to 7-segment display
     
 //    increment_one change_mode(.CLK(CLK), .btn(BTNC), .duty(mode)); // change mode
     
