@@ -270,4 +270,3 @@ module game(
           VGA_B[0] <= sq_a | sq_b| sq_c;
     end
 endmodule
-
