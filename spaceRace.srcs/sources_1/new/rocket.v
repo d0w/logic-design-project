@@ -42,7 +42,7 @@ module rocket
     output reg [11:0] o_y2,   // square bottom edge
     output wire active,     // active button flag
     output wire [1:0] com,  // paddle direction
-    output wire [3:0] lives //lives
+    output reg [3:0] lives //lives
     );
     
     assign com = BTN_DIR; // pass paddle direction to output
@@ -50,7 +50,7 @@ module rocket
     
     reg [11:0] x = IX;   // horizontal position of square centre
     reg [11:0] y = IY;   // vertical position of square centre
- 
+    reg [3:0] L;
     
      always @ (posedge i_clk)
     begin
@@ -62,9 +62,15 @@ module rocket
         if (i_animate & i_ani_stb & !endgame)
         begin
             if (BTN_DIR[0] & ! BTN_DIR[1] & o_y2<=D_HEIGHT) // only right button pressed
+            begin
                 y <= y + 10; // move paddle downwards
+                L = L - 1;
+            end
             if (BTN_DIR[1] & ! BTN_DIR[0] & o_y1>=10) // only left button pressed
+            begin
                 y <= y - 10; // move paddle upwards
+              L = L + 1;
+            end 
         end
     end
     
@@ -75,6 +81,7 @@ module rocket
         o_x2 = x + P_WIDTH;  // right edge
         o_y1 = y - P_HEIGHT;  // top edge
         o_y2 = y + P_HEIGHT;  // bottom edge
+        lives = L;
     end
     
 endmodule
