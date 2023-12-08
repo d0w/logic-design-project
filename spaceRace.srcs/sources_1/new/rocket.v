@@ -41,14 +41,14 @@ module rocket
     output reg [11:0] o_y1,  // square top edge
     output reg [11:0] o_y2,   // square bottom edge
     output wire active,     // active button flag
-    output wire [7:0] com,  // paddle direction
-    output reg [8:0] lives
+    output wire [7:0] com  // paddle direction
+//    output reg [8:0] lives
     );
     
     assign com = keycode; // pass paddle direction to output
     //assign active = BTN_DIR[0] | BTN_DIR[1]; // check if button is pressed when game over state
     
-    reg [8:0] L = 5;
+//    reg [8:0] L = 5;
     reg [11:0] x = IX;   // horizontal position of square centre
     reg [11:0] y = IY;   // vertical position of square centre
     
@@ -74,9 +74,15 @@ module rocket
     // Move paddle based on button press
     if (btnPress) begin
         if (keycode == 8'h1B & o_y2<=D_HEIGHT-5) // down button pressed
+        begin
             y <= y + 10; // move paddle downwards
+//            L = L - 1;
+        end
         else if (keycode == 8'h1D & o_y1>=10) // up button pressed
+        begin    
             y <= y - 10; // move paddle upwards
+//            L = L + 1;
+        end
     end
     end
     
@@ -88,7 +94,7 @@ module rocket
         o_y1 = y - P_HEIGHT;  // top edge
         o_y2 = y + P_HEIGHT;  // bottom edge
         
-        lives = L;
+//        lives = L;
     end
     
 endmodule

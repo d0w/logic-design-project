@@ -55,7 +55,7 @@ module top(
     wire endgame; // game over flag
     wire mode; // mode 0 - start menu, 1 - pong game
     assign mode = 1;
-    assign endgame = 0;
+//    assign endgame = 0;
     
     wire [31:0]keycode;
     

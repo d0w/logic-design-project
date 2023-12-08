@@ -21,7 +21,7 @@
 
 
 module game(
-    input wire [1:0] mode,
+    input wire mode,
     input wire CLK, // 100 Mhz clock
     input wire [7:0] keycode, // left and up buttons
     input wire [1:0] BTN_LU,
@@ -76,10 +76,6 @@ module game(
     wire [7:0] keycode1;
     wire [2:0] wall1,wall2;
     assign keycode1 = keycode;
-    
-    wire player1, player2;
-    assign player1 = animate;
-    assign player2 = mode == (2'b01  || 2'b10 || 2'b11) ? animate : 0;
            
     always @(posedge CLK)
     begin
@@ -129,7 +125,7 @@ module game(
         .endgame(endgame|!mode),
         .i_clk(CLK), 
         .i_ani_stb(pix_stb),
-        .i_animate(player1),
+        .i_animate(animate),
         .keycode(keycode),
         .o_x1(sq_b_x1),
         .o_x2(sq_b_x2),
@@ -137,10 +133,11 @@ module game(
         .o_y2(sq_b_y2),
         .active(active),
         .com(com)
+//        .lives(lives1)
         ); // rocket instance
         
       rocket2 #(.P_WIDTH(RW), .P_HEIGHT(RH), .IX(RX1), .IY(RY)) R2(
-        .endgame(player2),
+        .endgame(endgame|!mode),
         .i_clk(CLK), 
         .i_ani_stb(pix_stb),
         .i_animate(animate),
@@ -151,6 +148,7 @@ module game(
         .o_y2(sq_c_y2),
         .active(active1),
         .com(com1)
+//        .lives(lives2)
         ); // rocket instance
         
 //         ball2 #(.RY(RY), .RH(RH), .IX(IX), .IY(IY), .H_SIZE(B_SIZE)) b0 (
@@ -190,10 +188,9 @@ module game(
         .o_x2(sq_a_x2),
         .o_y1(sq_a_y1),
         .o_y2(sq_a_y2),
-        .endgame(endgame),
-        .score(score),
-        .wall1(wall1),
-        .wall2(wall2)
+        .lives1(lives1),
+        .lives2(lives2),
+        .endgame(endgame)      
     ); // ball instance
     
 //    square #(.PY(RY), .PH(RH), .IX(30), .IY(340), .H_SIZE(B_SIZE)) b1 (
@@ -321,17 +318,17 @@ module game(
 //        VGA_R[0] <= sq_a | sq_b | (sq_c & score>10) | (sq_d & score>20) | (sq_e & score > 30) | (sq_f & score > 40) | (sq_g & score > 50) | (sq_h & score > 60);
 //        VGA_G[0] <= sq_a | sq_b | (sq_c & score>10) | (sq_d & score>20) | (sq_e & score > 30) | (sq_f & score > 40) | (sq_g & score > 50) | (sq_h & score > 60);
 //        VGA_B[0] <= sq_a | sq_b | (sq_c & score>10) | (sq_d & score>20) | (sq_e & score > 30) | (sq_f & score > 40) | (sq_g & score > 50) | (sq_h & score > 60);
-          VGA_R[3] <= (sq_a | sq_b | sq_c) && (mode == 2'b00);
-          VGA_G[3] <= (sq_a | sq_b | sq_c) && (mode == 2'b01);
-          VGA_B[3] <= (sq_a | sq_b | sq_c) && (mode == 2'b10);
-          VGA_R[2] <= (sq_a | sq_b | sq_c) && (mode == 2'b00);
-          VGA_G[2] <= (sq_a | sq_b | sq_c) && (mode == 2'b01);
-          VGA_B[2] <= (sq_a | sq_b | sq_c) && (mode == 2'b10);
-          VGA_R[1] <= (sq_a | sq_b | sq_c) && (mode == 2'b00);
-          VGA_G[1] <= (sq_a | sq_b | sq_c) && (mode == 2'b01);
-          VGA_B[1] <= (sq_a | sq_b | sq_c) && (mode == 2'b10);
-          VGA_R[0] <= (sq_a | sq_b | sq_c) && (mode == 2'b00);
-          VGA_G[0] <= (sq_a | sq_b | sq_c) && (mode == 2'b01);
-          VGA_B[0] <= (sq_a | sq_b | sq_c) && (mode == 2'b10);
+          VGA_R[3] <= sq_a | sq_b | sq_c;
+          VGA_G[3] <= sq_a | sq_b| sq_c;
+          VGA_B[3] <= sq_a | sq_b| sq_c;
+          VGA_R[2] <= sq_a | sq_b| sq_c;
+          VGA_G[2] <= sq_a | sq_b| sq_c;
+          VGA_B[2] <= sq_a | sq_b| sq_c;
+          VGA_R[1] <= sq_a | sq_b| sq_c;
+          VGA_G[1] <= sq_a | sq_b| sq_c;
+          VGA_B[1] <= sq_a | sq_b| sq_c;
+          VGA_R[0] <= sq_a | sq_b| sq_c;
+          VGA_G[0] <= sq_a | sq_b| sq_c;
+          VGA_B[0] <= sq_a | sq_b| sq_c;
     end
 endmodule

@@ -112,12 +112,12 @@ module square_4 #(
             incy <= 1; // intialize y speed
         end
         
-        if (x_up & incx !=3) begin // check is maximum speed or change in x_dir
+        if (x_up & incx !=10) begin // check is maximum speed or change in x_dir
             incx <= incx + 1; // increase incx one unit
         end
-        if (y_up & incy !=3) begin // check is maximum speed or change in y_dir
+        if (y_up & incy != 10) begin // check is maximum speed or change in y_dir
                 incy <= incy + 1; // increase incy one unit
-                if ((com[0] | com[1]) & incx != 3) begin // check if left or right paddle during collision
+                if ((com[0] | com[1]) & incx != 10) begin // check if left or right paddle during collision
                     incx <= incx + 1; // increase incx one unit
                 end
         end
@@ -136,13 +136,13 @@ module square_4 #(
             x <= (x_dir) ? x + incx : x - incx;  // move left if positive x_dir
             y <= (y_dir) ? y + incy : y - incy;  // move down if positive y_dir
 
-//            if (x <= H_SIZE + 1) begin  // edge of square is at left of screen
-//                x_dir <= 1;  // change direction to right
-//            end
+            if (x <= H_SIZE + 1) begin  // edge of square is at left of screen
+                x_dir <= 1;  // change direction to right
+            end
             
-//            if (x >= (D_WIDTH - H_SIZE - 1)) begin  // edge of square at right
-//                x_dir <= 0;  // change direction to right
-//            end
+            if (x >= (D_WIDTH - H_SIZE - 1)) begin  // edge of square at right
+                x_dir <= 0;  // change direction to right
+            end
                      
             if (y <= H_SIZE + 1) begin // edge of square at top of screen
                 y_dir <= 1;  // change direction to down
@@ -167,22 +167,19 @@ module square_4 #(
 //                x_dir <=0;
             if ((i_x2+1>=o_x1) && ((i_y1<=o_y1 && o_y1<=i_y2) || (i_y1<=o_y2 && o_y2<=i_y2)))
               begin
-                x_dir <= 1;
-//                 if(x_dir)
-//                    x_dir <= 0;
-//                 else
-//                    x_dir <=1;
+                 if(x_dir)
+                    x_dir <= 0;
+                 else
+                    x_dir <=1;
            
           end
-          if ((t_x1+1<=o_x2) && ((t_y1<=o_y1 && o_y1<=t_y2) || (t_y1<=o_y2 && o_y2<=t_y2)))
+          if ((t_x1+1>=o_x2) && ((t_y1<=o_y1 && o_y1<=t_y2) || (t_y1<=o_y2 && o_y2<=t_y2)))
               begin
-                x_dir <=0;
-//                 if(x_dir)
-//                    x_dir <= 0;
-//                 else
-//                    x_dir <=1;
-//                 end
-            end
+                 if(x_dir)
+                    x_dir <= 0;
+                 else
+                    x_dir <=1;
+                 end
        end
     end
     
