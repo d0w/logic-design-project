@@ -33,7 +33,7 @@ module square_4 #(
     (
     input wire toggle,
     input wire [1:0] com,
-    input wire mode,        // mode
+    input wire [1:0] mode,        // mode
     input wire start,       // start flag
     input wire [11:0] i_x1, // paddle left edge
     input wire [11:0] i_x2, // paddle right edge
@@ -51,7 +51,9 @@ module square_4 #(
     output wire [11:0] o_y1,  // square top edge
     output wire [11:0] o_y2,   // square bottom edge
     output reg [8:0] score,
-    output reg endgame = 0
+    output reg endgame = 0,
+    output reg [2:0] wall1,
+    output reg [2:0] wall2
     );
     
     reg [8:0] s;
@@ -94,6 +96,9 @@ module square_4 #(
         if (x <= H_SIZE + 1 && toggle)  // on reset return to starting position
         begin
             endgame <= 1; // pass endgame flag
+            wall1 <= wall1 + 1;
+            if (wall1>=5)
+               wall1 <=0;
             x <= IX; // intialize ball to starting x
             y <= IY; // initialize ball to starting y
             x_dir <= ctr; // initialize ball x direction
@@ -104,6 +109,9 @@ module square_4 #(
        if (x >= D_WIDTH- H_SIZE - 1 && toggle)  // on reset return to starting position
         begin
             endgame <= 1; // pass endgame flag
+            wall2 <= wall2+1;
+            if (wall2>=5)
+              wall2 <=0;
             x <= IX; // intialize ball to starting x
             y <= IY; // initialize ball to starting y
             x_dir <= ctr; // initialize ball x direction
@@ -131,7 +139,7 @@ module square_4 #(
             incy <= 1; // intialize y speed
         end
               
-        if (i_animate & i_ani_stb & !endgame & mode)
+        if (i_animate && i_ani_stb && !endgame && mode)
         begin;
             x <= (x_dir) ? x + incx : x - incx;  // move left if positive x_dir
             y <= (y_dir) ? y + incy : y - incy;  // move down if positive y_dir
