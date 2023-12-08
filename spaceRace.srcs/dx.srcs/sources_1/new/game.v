@@ -49,7 +49,7 @@ module game(
     wire [9:0] x;  // current pixel x position: 10-bit value: 0-1023
     wire [8:0] y;  // current pixel y position:  9-bit value: 0-511
     wire animate;  // high when we're ready to animate at end of drawing
-    wire isAnimating;
+    wire player1, player2;
     wire collide; // collision flag
     
     //reg sq_a, sq_b, sq_c, sq_d, sq_e, sq_f, sq_g, sq_h; // registers to assign objects
@@ -74,8 +74,9 @@ module game(
         {pix_stb, cnt} <= cnt + 16'h4000;  // divide by 4: (2^16)/4 = 0x4000
     end
 
-    assign isAnimating = mode == 2'b01 ? animate : 0;
-    
+    assign player1 = animate;
+    assign player2 = mode == (2'b01  || 2'b10 || 2'b11) ? animate : 0;
+        
     vga640x480 display (
         .i_clk(CLK),
         .i_pix_stb(pix_stb),
@@ -88,10 +89,10 @@ module game(
     ); // vga 640x480 driver
             
     rocket #(.P_WIDTH(RW), .P_HEIGHT(RH), .IX(RX), .IY(RY)) R1(
-        .endgame(endgame|!mode),
+        .endgame(endgame),
         .i_clk(CLK), 
         .i_ani_stb(pix_stb),
-        .i_animate(isAnimating),
+        .i_animate(player1),
         .BTN_DIR(BTN_LU),
         .o_x1(sq_b_x1),
         .o_x2(sq_b_x2),
@@ -102,10 +103,10 @@ module game(
         ); // rocket instance
         
     rocket2 #(.P_WIDTH(RW), .P_HEIGHT(RH), .IX(480), .IY(RY)) R2(
-        .endgame(endgame|!mode),
+        .endgame(endgame),
         .i_clk(CLK), 
         .i_ani_stb(pix_stb),
-        .i_animate(isAnimating),
+        .i_animate(player2),
         .BTN_DIR(BTN_DR),
         .o_x1(sq_c_x1),
         .o_x2(sq_c_x2),
@@ -116,7 +117,7 @@ module game(
     ); // rocket instance
         
     ball #(.RY(RY), .RH(RH), .IX(IX), .IY(IY), .H_SIZE(B_SIZE)) b0 (
-        .toggle(1),
+        .toggle(player2),
         .com(com),
         .mode(mode),
         .start(active),
@@ -124,7 +125,7 @@ module game(
         .i_x2(sq_b_x2),
         .i_clk(CLK), 
         .i_ani_stb(pix_stb),
-        .i_animate(isAnimating),
+        .i_animate(player1),
         .o_x1(sq_a_x1),
         .o_x2(sq_a_x2),
         .o_y1(sq_a_y1),
@@ -256,18 +257,18 @@ module game(
 //        VGA_R[0] <= sq_a | sq_b | (sq_c & score>10) | (sq_d & score>20) | (sq_e & score > 30) | (sq_f & score > 40) | (sq_g & score > 50) | (sq_h & score > 60);
 //        VGA_G[0] <= sq_a | sq_b | (sq_c & score>10) | (sq_d & score>20) | (sq_e & score > 30) | (sq_f & score > 40) | (sq_g & score > 50) | (sq_h & score > 60);
 //        VGA_B[0] <= sq_a | sq_b | (sq_c & score>10) | (sq_d & score>20) | (sq_e & score > 30) | (sq_f & score > 40) | (sq_g & score > 50) | (sq_h & score > 60);
-          VGA_R[3] <= sq_a | sq_b | sq_c;
-          VGA_G[3] <= sq_a | sq_b| sq_c;
-          VGA_B[3] <= sq_a | sq_b| sq_c;
-          VGA_R[2] <= sq_a | sq_b| sq_c;
-          VGA_G[2] <= sq_a | sq_b| sq_c;
-          VGA_B[2] <= sq_a | sq_b| sq_c;
-          VGA_R[1] <= sq_a | sq_b| sq_c;
-          VGA_G[1] <= sq_a | sq_b| sq_c;
-          VGA_B[1] <= sq_a | sq_b| sq_c;
-          VGA_R[0] <= sq_a | sq_b| sq_c;
-          VGA_G[0] <= sq_a | sq_b| sq_c;
-          VGA_B[0] <= sq_a | sq_b| sq_c;
-    end
+          VGA_R[3] <= (sq_a | sq_b | sq_c) && (mode == 2'b00);
+          VGA_G[3] <= (sq_a | sq_b | sq_c) && (mode == 2'b01);
+          VGA_B[3] <= (sq_a | sq_b | sq_c) && (mode == 2'b10);
+          VGA_R[2] <= (sq_a | sq_b | sq_c) && (mode == 2'b00);
+          VGA_G[2] <= (sq_a | sq_b | sq_c) && (mode == 2'b01);
+          VGA_B[2] <= (sq_a | sq_b | sq_c) && (mode == 2'b10);
+          VGA_R[1] <= (sq_a | sq_b | sq_c) && (mode == 2'b00);
+          VGA_G[1] <= (sq_a | sq_b | sq_c) && (mode == 2'b01);
+          VGA_B[1] <= (sq_a | sq_b | sq_c) && (mode == 2'b10);
+          VGA_R[0] <= (sq_a | sq_b | sq_c) && (mode == 2'b00);
+          VGA_G[0] <= (sq_a | sq_b | sq_c) && (mode == 2'b01);
+          VGA_B[0] <= (sq_a | sq_b | sq_c) && (mode == 2'b10);
+    end            
 endmodule
 

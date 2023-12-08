@@ -1,10 +1,10 @@
 module incrementer(
     input wire CLK, // clock
     input wire btn, // button
-    output reg duty // output 
+    output reg [1:0] duty // output 
     );
      
-    reg n_clicks = 0; // number of presses
+    reg [1:0] n_clicks = 0; // number of presses
     
     wire btn0_state, btn0_dn, btn0_up;
     debounce d_btn0 (
@@ -24,9 +24,9 @@ module incrementer(
         end
     end
     
-    always @(*)
+    always @(n_clicks)
     begin
-        duty = n_clicks; // assign number of presses to output
+        duty <= n_clicks; // assign number of presses to output
     end
     
 endmodule

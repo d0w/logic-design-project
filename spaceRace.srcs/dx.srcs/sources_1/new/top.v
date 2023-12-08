@@ -52,23 +52,15 @@ module top(
     
     wire endgame; // game over flag
     wire [1:0] mode; // mode 0 - start menu, 1 - pong game 2 - shooter mode, 3 - hold 
-    assign endgame = 0;
     clock_divider #(.DIVISOR(500000)) clk600Hz(.clk_in(CLK), .clk_out(slow_clk));  // create 200 Hz clock for seven segment display
     
+    assign endgame = 0;
     game spaceRace1(.mode(mode), .CLK(CLK), .BTN_LU(BTN_LU), .BTN_DR(BTN_DR), .VGA_HS(vga_hs), .VGA_VS(vga_vs), 
     .VGA_R(vga_r), .VGA_G(vga_g), .VGA_B(vga_b), .endgame(endgame), .score(curr_score)); // initialize pong game
-
-//    game spaceRace2(.mode(mode), .CLK(CLK), .BTN_LU(BTN_LU), .BTN_DR(BTN_DR), .VGA_HS(vga_hs), .VGA_VS(vga_vs), 
-//    .VGA_R(vga_r), .VGA_G(vga_g), .VGA_B(vga_b), .endgame(endgame), .score(curr_score)); // initialize shooter pong game
 
 //    game spaceRace3(.mode(mode), .CLK(CLK), .BTN_LU(BTN_LU), .BTN_DR(BTN_DR), .VGA_HS(vga_hs), .VGA_VS(vga_vs), 
 //    .VGA_R(vga_r), .VGA_G(vga_g), .VGA_B(vga_b), .endgame(endgame), .score(curr_score)); // initialize hold pong game
     
-//    menu(.mode(mode), .CLK(CLK), .VGA_HS(vga_h_start), .VGA_VS(vga_v_start), 
-//    .VGA_R(vga_r_start), .VGA_G(vga_g_start), .VGA_B(vga_b_start)); // start menu driver
-    
-    //bg_gen #(.MEMFILE("gameover.mem"), .PALETTE("gameover_palette.mem")) end_screen(.CLK(CLK), .RST_BTN(RST_BTN), .VGA_HS(vga_h_end), 
-   // .VGA_VS(vga_v_end), .VGA_R(vga_r_end), .VGA_G(vga_g_end), .VGA_B(vga_b_end)); // game over menu driver
             
 //    score_to_7seg current(.clk(slow_clk), .currscore(curr_score), .anode(c_anode), .segment(c_seg)); // current score to 7-segment display
 //    score_to_7seg highest(.clk(slow_clk), .currscore(highest_score), .anode(h_anode), .segment(h_seg)); // high score to 7-segment display
@@ -90,6 +82,8 @@ module top(
                      {AN, VGA_R, VGA_G, VGA_B, VGA_HS, VGA_VS} = {8'b11111111 ,vga_r_end, vga_g_end, vga_b_end, vga_h_end, vga_v_end}; // game over screen
                 end
             end
+            2: {seg, AN, VGA_R, VGA_G, VGA_B, VGA_HS, VGA_VS} = {c_seg, c_anode, vga_r, vga_g, vga_b, vga_hs, vga_vs}; // pong game
+            3: {seg, AN, VGA_R, VGA_G, VGA_B, VGA_HS, VGA_VS} = {c_seg, c_anode, vga_r, vga_g, vga_b, vga_hs, vga_vs}; // pong game
         endcase
     
     end

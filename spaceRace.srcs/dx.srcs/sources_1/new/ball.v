@@ -33,7 +33,7 @@ module ball #(
     (
     input wire toggle,
     input wire [1:0] com,
-    input wire mode,        // mode
+    input wire [1:0] mode,        // mode
     input wire start,       // start flag
     input wire [11:0] i_x1, // paddle left edge
     input wire [11:0] i_x2, // paddle right edge
@@ -115,7 +115,7 @@ module ball #(
             incy <= 1; // intialize y speed
         end
               
-        if (i_animate & i_ani_stb & !endgame & mode)
+        if (i_animate && i_ani_stb && !endgame && mode)
         begin;
             x <= (x_dir) ? x + incx : x - incx;  // move left if positive x_dir
             y <= (y_dir) ? y + incy : y - incy;  // move down if positive y_dir
