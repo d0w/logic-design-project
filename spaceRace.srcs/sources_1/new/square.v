@@ -20,9 +20,9 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module square #(
-    PY=10,          // paddle y
-    PH=10,          // paddle height
+module square_4 #(
+    RY=10,          // paddle y
+    RH=10,          // paddle height
     H_SIZE=80,      // half square width (for ease of co-ordinate calculations)
     IX=320,         // initial horizontal position of square centre
     IY=240,         // initial vertical position of square centre
@@ -37,8 +37,12 @@ module square #(
     input wire start,       // start flag
     input wire [11:0] i_x1, // paddle left edge
     input wire [11:0] i_x2, // paddle right edge
-    input wire [11:0] i_y1, // paddle top edge
-    input wire [11:0] i_y2, // paddle right edge 
+    input wire [11:0] i_y1,
+    input wire [11:0] i_y2,
+    input wire [11:0] t_x1,
+    input wire [11:0] t_x2,
+    input wire [11:0] t_y1,
+    input wire [11:0] t_y2,
     input wire i_clk,         // base clock
     input wire i_ani_stb,     // animation clock: pixel clock is 1 pix/frame
     input wire i_animate,     // animate when input is high
@@ -87,7 +91,17 @@ module square #(
             incy <= 1; // intialize with y speed
         end
         
-        if (y >= D_HEIGHT - H_SIZE - 1 & toggle)  // on reset return to starting position
+        if (x <= H_SIZE + 1 && toggle)  // on reset return to starting position
+        begin
+            endgame <= 1; // pass endgame flag
+            x <= IX; // intialize ball to starting x
+            y <= IY; // initialize ball to starting y
+            x_dir <= ctr; // initialize ball x direction
+            y_dir <= IY_DIR; // intialize ball y direction
+            incx <= 1; // intialize x speed
+            incy <= 1; // intialize y speed
+        end
+       if (x >= D_WIDTH- H_SIZE - 1 && toggle)  // on reset return to starting position
         begin
             endgame <= 1; // pass endgame flag
             x <= IX; // intialize ball to starting x
@@ -98,12 +112,12 @@ module square #(
             incy <= 1; // intialize y speed
         end
         
-        if (x_up & incx !=10) begin // check is maximum speed or change in x_dir
+        if (x_up & incx !=3) begin // check is maximum speed or change in x_dir
             incx <= incx + 1; // increase incx one unit
         end
-        if (y_up & incy != 10) begin // check is maximum speed or change in y_dir
+        if (y_up & incy !=3) begin // check is maximum speed or change in y_dir
                 incy <= incy + 1; // increase incy one unit
-                if ((com[0] | com[1]) & incx != 10) begin // check if left or right paddle during collision
+                if ((com[0] | com[1]) & incx != 3) begin // check if left or right paddle during collision
                     incx <= incx + 1; // increase incx one unit
                 end
         end
@@ -111,7 +125,6 @@ module square #(
         if (!mode) begin // if we are not in correct mode
             x <= IX; // intialize ball to starting x
             y <= IY; // initialize ball to starting y
-   
             x_dir <= ctr; // initialize ball x direction
             y_dir <= IY_DIR; // intialize ball y direction
             incx <= 1; // intialize x speed
@@ -123,31 +136,53 @@ module square #(
             x <= (x_dir) ? x + incx : x - incx;  // move left if positive x_dir
             y <= (y_dir) ? y + incy : y - incy;  // move down if positive y_dir
 
-            if (x <= H_SIZE + 1) begin  // edge of square is at left of screen
-                x_dir <= 1;  // change direction to right
-            end
+//            if (x <= H_SIZE + 1) begin  // edge of square is at left of screen
+//                x_dir <= 1;  // change direction to right
+//            end
             
-            if (x >= (D_WIDTH - H_SIZE - 1)) begin  // edge of square at right
-                x_dir <= 0;  // change direction to right
-            end
+//            if (x >= (D_WIDTH - H_SIZE - 1)) begin  // edge of square at right
+//                x_dir <= 0;  // change direction to right
+//            end
                      
             if (y <= H_SIZE + 1) begin // edge of square at top of screen
                 y_dir <= 1;  // change direction to down
                 
             end
-            if (y>= (D_HEIGHT-H_SIZE-1))
-               y_dir <= 0;        
-                 if (com[1] & !com[0])
+            
+            if (y >= (D_HEIGHT - H_SIZE - 1)) begin //|| y == (PY - PH - 1))  // paddle hit
+                y_dir <= 0;  // change direction to up
+                if (com[1] & !com[0])
                     x_dir <= 0;
                 else if (com[0] & !com[1])
-                    x_dir <= 1;      // change direction to up
-            if (x == i_x1 || x == i_x2) begin 
-               if (i_y1<= o_y1 <= i_y2 || i_y1 <= o_y2 <= i_y2)//|| y == (PY - PH - 1))  // paddle hit
-                y_dir <= ~(y_dir);  // change direction to up
-                x_dir <= ~(x_dir);
+                    x_dir <= 1;
             end
-            
-     
+      
+//           if (x + H_SIZE == i_x2)
+//            begin
+//             if (i_y1<=y+H_SIZE<=i_y2 || i_y1<=y-H_SIZE<=i_y2)
+//              if (com[1] & !com[0])
+                 
+//                x_dir <= 1;
+//              else if (com[0] & !com[1])
+//                x_dir <=0;
+            if ((i_x2+1>=o_x1) && ((i_y1<=o_y1 && o_y1<=i_y2) || (i_y1<=o_y2 && o_y2<=i_y2)))
+              begin
+                x_dir <= 1;
+//                 if(x_dir)
+//                    x_dir <= 0;
+//                 else
+//                    x_dir <=1;
+           
+          end
+          if ((t_x1+1<=o_x2) && ((t_y1<=o_y1 && o_y1<=t_y2) || (t_y1<=o_y2 && o_y2<=t_y2)))
+              begin
+                x_dir <=0;
+//                 if(x_dir)
+//                    x_dir <= 0;
+//                 else
+//                    x_dir <=1;
+//                 end
+            end
        end
     end
     
@@ -165,3 +200,4 @@ module square #(
     end    
     
 endmodule
+    

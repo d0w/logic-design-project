@@ -23,25 +23,30 @@
 module game(
     input wire mode,
     input wire CLK, // 100 Mhz clock
-    input wire [1:0] BTN_LU, // left and up buttons
-    input wire [1:0] BTN_DR, // left and up buttons
+    input wire [7:0] keycode, // left and up buttons
+    input wire [1:0] BTN_LU,
+    input wire [1:0] BTN_DR,
     output wire VGA_HS, // horizontal sync
     output wire VGA_VS, // vertical sync
     output reg [3:0] VGA_R, // red channels
     output reg [3:0] VGA_G, // green channels
     output reg [3:0] VGA_B, // blue channels
     output wire endgame, // game end flag
-    output wire [8:0] lives1, lives2
-    
+    output wire [8:0] lives1,lives2
     );
     
-    localparam RW = 5; // rocket width
-    localparam RH = 10; // rocket height
+    localparam RW = 10; // rocket width
+    localparam RH = 30; // rocket height
     localparam RY = 440 - RH; // initial paddle y
-    localparam RX = 160; // initial paddle x
+    localparam RX1 = 640-RW; // initial paddle x
+    localparam RX = 0 + RW; // initial paddle x
+//    localparam PW = 100; // paddle width
+//    localparam PH = 40; // paddle height
+//    localparam PY = 480 - PH; // initial paddle y
+//    localparam PX = 320; // initial paddle x
     
     localparam IX = 320; // intial ball x
-    localparam IY = 470 - RH - RH - 30; //initial ball y
+    localparam IY = 470 -RH - RH - 30; //initial ball y
     localparam B_SIZE = 10; // ball size
     
     reg [15:0] cnt = 0; // pixel clock counter
@@ -68,6 +73,8 @@ module game(
     wire active; // active flag during game over sequence
     wire [1:0] com; // bits to check rocket direction
     wire [1:0] com1; // bits to check rocket direction
+    wire [7:0] keycode1;
+    assign keycode1 = keycode;
            
     always @(posedge CLK)
     begin
@@ -85,43 +92,92 @@ module game(
         .o_animate(animate)
     ); // vga 640x480 driver
             
+            
+//         paddle #(.P_WIDTH(PW), .P_HEIGHT(PH), .IX(PX), .IY(PY)) p1(
+//        .endgame(endgame|!mode),
+//        .i_clk(CLK), 
+//        .i_ani_stb(pix_stb),
+//        .i_animate(animate),
+//        .keycode(keycode),
+//        .o_x1(sq_b_x1),
+//        .o_x2(sq_b_x2),
+//        .o_y1(sq_b_y1),
+//        .o_y2(sq_b_y2),
+//        .active(active),
+//        .com(com)
+//        ); // paddle instance
+        
+//        paddle2 #(.P_WIDTH(PW), .P_HEIGHT(PH), .IX(PX), .IY(PY)) p2(
+//        .endgame(endgame|!mode),
+//        .i_clk(CLK), 
+//        .i_ani_stb(pix_stb),
+//        .i_animate(animate),
+//        .keycode(keycode),
+//        .o_x1(sq_c_x1),
+//        .o_x2(sq_c_x2),
+//        .o_y1(sq_c_y1),
+//        .o_y2(sq_c_y2),
+//        .active(active1),
+//        .com(com1)
+//        ); // paddle instance
     rocket #(.P_WIDTH(RW), .P_HEIGHT(RH), .IX(RX), .IY(RY)) R1(
         .endgame(endgame|!mode),
         .i_clk(CLK), 
         .i_ani_stb(pix_stb),
         .i_animate(animate),
-        .BTN_DIR(BTN_LU),
+        .keycode(keycode),
         .o_x1(sq_b_x1),
         .o_x2(sq_b_x2),
         .o_y1(sq_b_y1),
         .o_y2(sq_b_y2),
         .active(active),
-        .com(com),
-        .lives(lives1)
+        .com(com)
         ); // rocket instance
         
-      rocket2 #(.P_WIDTH(RW), .P_HEIGHT(RH), .IX(480), .IY(RY)) R2(
+      rocket2 #(.P_WIDTH(RW), .P_HEIGHT(RH), .IX(RX1), .IY(RY)) R2(
         .endgame(endgame|!mode),
         .i_clk(CLK), 
         .i_ani_stb(pix_stb),
         .i_animate(animate),
-        .BTN_DIR(BTN_DR),
+        .keycode(keycode1),
         .o_x1(sq_c_x1),
         .o_x2(sq_c_x2),
         .o_y1(sq_c_y1),
         .o_y2(sq_c_y2),
         .active(active1),
-        .com(com1),
-        .lives(lives2)
+        .com(com1)
         ); // rocket instance
         
-    ball #(.RY(RY), .RH(RH), .IX(IX), .IY(IY), .H_SIZE(B_SIZE)) b0 (
+//         ball2 #(.RY(RY), .RH(RH), .IX(IX), .IY(IY), .H_SIZE(B_SIZE)) b0 (
+//        .toggle(1),
+//        .com(com),
+//        .mode(mode),
+//        .start(active),
+//        .i_y1(sq_b_y1),
+//        .i_y2(sq_b_y2),
+//        .i_clk(CLK), 
+//        .i_ani_stb(pix_stb),
+//        .i_animate(animate),
+//        .o_x1(sq_a_x1),
+//        .o_x2(sq_a_x2),
+//        .o_y1(sq_a_y1),
+//        .o_y2(sq_a_y2),
+//        .endgame(endgame),
+//        .score(score)
+//    ); // ball instance
+    square_4 #(.RY(RY), .RH(RH), .IX(IX), .IY(IY), .H_SIZE(B_SIZE)) b0 (
         .toggle(1),
         .com(com),
         .mode(mode),
         .start(active),
         .i_x1(sq_b_x1),
         .i_x2(sq_b_x2),
+        .i_y1(sq_b_y1),
+        .i_y2(sq_b_y2),
+        .t_x1(sq_c_x1),
+        .t_x2(sq_c_x2),
+        .t_y1(sq_c_y1),
+        .t_y2(sq_c_y2),
         .i_clk(CLK), 
         .i_ani_stb(pix_stb),
         .i_animate(animate),
@@ -133,13 +189,15 @@ module game(
         .score(score)
     ); // ball instance
     
-//    square #(.PY(PY), .PH(PH), .IX(30), .IY(340), .H_SIZE(B_SIZE)) b1 (
-//        .toggle(0),
+//    square #(.PY(RY), .PH(RH), .IX(30), .IY(340), .H_SIZE(B_SIZE)) b1 (
+//        .toggle(1),
 //        .com(com),
 //        .mode(mode),
 //        .start(active),
 //        .i_x1(sq_b_x1),
 //        .i_x2(sq_b_x2),
+//        .i_y1(sq_b_y1),
+//        .i_y2(sq_b_y2),
 //        .i_clk(CLK), 
 //        .i_ani_stb(pix_stb),
 //        .i_animate(animate),

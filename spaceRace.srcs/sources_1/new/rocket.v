@@ -35,22 +35,24 @@ module rocket
     input wire i_clk,         // base clock
     input wire i_ani_stb,     // animation clock: pixel clock is 1 pix/frame
     input wire i_animate,     // animate flag 
-    input wire [1:0] BTN_DIR,     // bit 0 - right, bit 1 - left
+    input wire [7:0] keycode,     // bit 0 - right, bit 1 - left
     output reg [11:0] o_x1,  // square left edge: 12-bit value: 0-4095
     output reg [11:0] o_x2,  // square right edge
     output reg [11:0] o_y1,  // square top edge
     output reg [11:0] o_y2,   // square bottom edge
     output wire active,     // active button flag
-    output wire [1:0] com,  // paddle direction
-    output reg [3:0] lives //lives
+    output wire [7:0] com,  // paddle direction
+    output reg [8:0] lives
     );
     
-    assign com = BTN_DIR; // pass paddle direction to output
-    assign active = BTN_DIR[0] | BTN_DIR[1]; // check if button is pressed when game over state
+    assign com = keycode; // pass paddle direction to output
+    //assign active = BTN_DIR[0] | BTN_DIR[1]; // check if button is pressed when game over state
     
+    reg [8:0] L = 5;
     reg [11:0] x = IX;   // horizontal position of square centre
     reg [11:0] y = IY;   // vertical position of square centre
-    reg [3:0] L;
+    
+    reg btnPress; 
     
      always @ (posedge i_clk)
     begin
@@ -59,19 +61,23 @@ module rocket
             x <= IX; // intialize x direction
             y <= IY; // intialize y direction
         end
-        if (i_animate & i_ani_stb & !endgame)
-        begin
-            if (BTN_DIR[0] & ! BTN_DIR[1] & o_y2<=D_HEIGHT) // only right button pressed
-            begin
-                y <= y + 10; // move paddle downwards
-                L = L - 1;
-            end
-            if (BTN_DIR[1] & ! BTN_DIR[0] & o_y1>=10) // only left button pressed
-            begin
-                y <= y - 10; // move paddle upwards
-              L = L + 1;
-            end 
-        end
+        if (i_animate & i_ani_stb & !endgame) begin
+        if (keycode == 8'h1B & o_y2<=D_HEIGHT) // up button pressed
+            btnPress <= 1;
+        else if (keycode == 8'h1D & o_y1>=10) // down button pressed
+            btnPress <= 1;
+        else
+            btnPress <= 0;
+    end else
+        btnPress <= 0;
+
+    // Move paddle based on button press
+    if (btnPress) begin
+        if (keycode == 8'h1B & o_y2<=D_HEIGHT-5) // down button pressed
+            y <= y + 10; // move paddle downwards
+        else if (keycode == 8'h1D & o_y1>=10) // up button pressed
+            y <= y - 10; // move paddle upwards
+    end
     end
     
     
@@ -81,6 +87,7 @@ module rocket
         o_x2 = x + P_WIDTH;  // right edge
         o_y1 = y - P_HEIGHT;  // top edge
         o_y2 = y + P_HEIGHT;  // bottom edge
+        
         lives = L;
     end
     

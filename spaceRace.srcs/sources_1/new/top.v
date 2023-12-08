@@ -23,8 +23,10 @@
 module top(
     input wire CLK, // 100 Mhz clock
     input wire RST_BTN, // reset button
-    input wire [1:0] BTN_LU, // left and right buttons
-    input wire [1:0] BTN_DR, // left and right buttons
+    input wire [1:0] BTN_LU,
+    input wire [1:0] BTN_DR,
+    input wire PS2_CLK, // left and right buttons
+    input wire PS2_DATA, // left and right buttons
     input wire BTNC, // mode change button
     output reg VGA_HS, // horizontal sync
     output reg VGA_VS, // vertical sync
@@ -47,17 +49,27 @@ module top(
     wire [6:0] c_seg, h_seg; // current score segments
     wire [7:0] c_anode, h_anode; // high score segments
     
-    wire [8:0] p1Lives = 5, p2Lives = 4; // current score bits
+    wire [8:0] p1Lives, p2Lives; // current score bits
     wire slow_clk; // 7-segment clock 
     
     wire endgame; // game over flag
     wire mode; // mode 0 - start menu, 1 - pong game
     assign mode = 1;
     assign endgame = 0;
+    
+    wire [31:0]keycode;
+    
+    PS2Receiver keyboard(
+    .clk(CLK),
+    .kclk(PS2_CLK),
+    .kdata(PS2_DATA),
+    .keycodeout(keycode[31:0])
+    );
+    
     clock_divider #(.DIVISOR(500000)) clk600Hz(.clk_in(CLK), .clk_out(slow_clk));  // create 200 Hz clock for seven segment display
     
-    game spaceRace(.mode(mode), .CLK(CLK), .BTN_LU(BTN_LU), .BTN_DR(BTN_DR), .VGA_HS(vga_hs), .VGA_VS(vga_vs), 
-    .VGA_R(vga_r), .VGA_G(vga_g), .VGA_B(vga_b), .endgame(endgame), .lives1(p1Lives), .lives2(p2Lives)); // initialize pong game
+    game spaceRace(.mode(mode), .CLK(CLK), .keycode(keycode[7:0]), .BTN_LU(BTN_LU),.BTN_DR(BTN_DR), .VGA_HS(vga_hs), .VGA_VS(vga_vs), 
+    .VGA_R(vga_r), .VGA_G(vga_g), .VGA_B(vga_b), .endgame(endgame), .lives1(p1Lives), .lives2(p2Lives) ); // initialize pong game
     
 //    menu_screen(.mode(mode), .CLK(CLK), .VGA_HS(vga_h_start), .VGA_VS(vga_v_start), 
 //    .VGA_R(vga_r_start), .VGA_G(vga_g_start), .VGA_B(vga_b_start)); // start menu driver
@@ -65,9 +77,8 @@ module top(
     //bg_gen #(.MEMFILE("gameover.mem"), .PALETTE("gameover_palette.mem")) end_screen(.CLK(CLK), .RST_BTN(RST_BTN), .VGA_HS(vga_h_end), 
    // .VGA_VS(vga_v_end), .VGA_R(vga_r_end), .VGA_G(vga_g_end), .VGA_B(vga_b_end)); // game over menu driver
             
-    //score_to_7seg p1(.clk(slow_clk), .currscore(p1Lives), .anode(c_anode), .segment(c_seg)); // current score to 7-segment display
-    score_to_7seg Lives(.clk(slow_clk), .currscore(p1Lives), .currscore2(p2Lives), .anode(c_anode), .segment(c_seg));
-   // score_to_7seg2 p2(.clk(slow_clk), .currscore(p2Lives), .anode(h_anode), .segment(h_seg)); // high score to 7-segment display
+    score_to_7seg lives(.clk(slow_clk), .currscore(p1Lives),.currscore2(p2Lives), .anode(c_anode), .segment(c_seg)); // current score to 7-segment display
+//    score_to_7seg highest(.clk(slow_clk), .currscore(highest_score), .anode(h_anode), .segment(h_seg)); // high score to 7-segment display
     
 //    increment_one change_mode(.CLK(CLK), .btn(BTNC), .duty(mode)); // change mode
     
