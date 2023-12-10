@@ -75,7 +75,7 @@ module game(
     end
 
     assign player1 = animate;
-    assign player2 = mode == (2'b01  || 2'b10 || 2'b11) ? animate : 0;
+    assign player2 = animate;
         
     vga640x480 display (
         .i_clk(CLK),

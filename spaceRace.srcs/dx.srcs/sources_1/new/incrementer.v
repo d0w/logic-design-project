@@ -19,7 +19,7 @@ module incrementer(
     begin
         if (btn0_dn) // check if button pressed
         begin
-            if (n_clicks > 3) n_clicks <= 0;
+//            if (n_clicks > 3) n_clicks <= 0;
             n_clicks <= n_clicks + 1;// increment if button down
         end
     end
