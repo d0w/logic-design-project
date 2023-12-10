@@ -52,7 +52,8 @@ module rocket
     reg [11:0] x = IX;   // horizontal position of square centre
     reg [11:0] y = IY;   // vertical position of square centre
     
-    reg btnPress; 
+    reg[2:0] btnPress;
+    reg[1:0] movement; 
     
     always @ (posedge i_clk)
     begin
@@ -62,25 +63,36 @@ module rocket
             y <= IY; // intialize y direction
         end
         if (i_animate & i_ani_stb & !endgame) begin
-            if (keycode == 8'h1B & o_y2<=D_HEIGHT) // up button pressed
+            if (keycode == 8'h1B & o_y2<=D_HEIGHT) begin// up button pressed
                 btnPress <= 1;
-            else if (keycode == 8'h1D & o_y1>=10) // down button pressed
-                btnPress <= 1;
-            else
-                btnPress <= 0;
+                movement <= 1;
+            end
+            else if (keycode == 8'h1D & o_y1>=10) begin// down button pressed
+                btnPress <= 2;
+                movement <= 2;
+            end
+            else if (keycode == 8'h1C & o_y1>=10) begin// down button pressed
+                btnPress <= 3;
+                movement <= 0;
+            end
+           else
+                btnPress <= 4;
             end 
         else
         btnPress <= 0;
 
     // Move paddle based on button press
-    if (btnPress) begin
-        if (keycode == 8'h1B & o_y2<=D_HEIGHT-5) // down button pressed
+    if(btnPress) begin
+    if (movement == 1 && o_y2<=D_HEIGHT-5) begin
+        //if (keycode == 8'h1B & o_y2<=D_HEIGHT-5 || keycode == 8'h72 & o_y2<=D_HEIGHT-5 || keycode == 8'h75 & o_y2<=D_HEIGHT-5) // down button pressed
             y <= y + 10; // move paddle downwards
-        else if (keycode == 8'h1D & o_y1>=10) // up button pressed
+    end
+    else if (movement == 2 && o_y1>=10) begin
+        //if (keycode == 8'h1D & o_y1>=10 || keycode == 8'h72 & o_y1>=10 || keycode == 8'h75 & o_y1>=10) // up button pressed
             y <= y - 10; // move paddle upwards
     end
     end
-    
+    end
     
     always @(*)
     begin
