@@ -35,19 +35,33 @@ and a non-functioning high score counter along with a ball and ball collision. W
 
 ## Code Structure:
 top.v
+
 -> game.v
+
     -> vga640x480.v
+    
     -> rocket.v
+    
     -> square.v
+    
         -> debounce.v
+        
 -> PS2Receiver.v
+
 -> clock_divider.v
+
 -> menu_screen.v
+
     -> vga640x480.v
+    
     -> sram.v
+    
 -> bg_gen.v (end_screen)
+
 -> incrementer.v
+
     -> debounce.v
+    
 -> score_to_7seg
 
 
