@@ -34,7 +34,7 @@ and a non-functioning high score counter along with a ball and ball collision. W
 - A USB keyboard should be connected to the FPGA
 
 ## Code Structure:
-top.v
+`top.v
 
 -> game.v
 
@@ -63,7 +63,7 @@ top.v
     -> debounce.v
     
 -> score_to_7seg
-
+`
 
 ### top.v: 
 We have a top module that houses the "keyboard" "clock divider" "game screen" "menu screen" "7-segment-display" modules
