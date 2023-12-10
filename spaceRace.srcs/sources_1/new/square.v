@@ -53,10 +53,14 @@ module square_4 #(
     output reg [8:0] score,
     output reg endgame = 0,
     output reg [2:0] wall1,
-    output reg [2:0] wall2
+    output reg [2:0] wall2,
+    output reg [8:0] lives1,
+    output reg [8:0] lives2
     );
     
     reg [8:0] s;
+    reg [8:0] L1 = 5;
+    reg [8:0] L2 = 5;
     reg [11:0] x = IX;   // horizontal position of square centre
     reg [11:0] y = IY;   // vertical position of square centre
     reg y_dir = IY_DIR;  // vertical animation direction
@@ -95,10 +99,8 @@ module square_4 #(
         
         if (x <= H_SIZE + 1 && toggle)  // on reset return to starting position
         begin
-            endgame <= 1; // pass endgame flag
-            wall1 <= wall1 + 1;
-            if (wall1>=5)
-               wall1 <=0;
+          
+            L1 = L1 - 1;
             x <= IX; // intialize ball to starting x
             y <= IY; // initialize ball to starting y
             x_dir <= ctr; // initialize ball x direction
@@ -108,10 +110,7 @@ module square_4 #(
         end
        if (x >= D_WIDTH- H_SIZE - 1 && toggle)  // on reset return to starting position
         begin
-            endgame <= 1; // pass endgame flag
-            wall2 <= wall2+1;
-            if (wall2>=5)
-              wall2 <=0;
+            L2 = L2 - 1;
             x <= IX; // intialize ball to starting x
             y <= IY; // initialize ball to starting y
             x_dir <= ctr; // initialize ball x direction
@@ -196,15 +195,26 @@ module square_4 #(
     
     always @(posedge i_clk)
     begin
-        if (y_up) // if paddle collision
-            s = s + 1; // increment score
-        else if (endgame | !mode) // if game ended or not in correct mode
-            s = 0; // assign score to zero
+//        if (y_up) // if paddle collision
+//            s = s + 1; // increment score
+//        else if (endgame | !mode) // if game ended or not in correct mode
+//            s = 0; // assign score to zero
+        if (L1==0)
+        begin
+               endgame <= 1; // pass endgame flag
+        end
+        
+        if (L2==0)
+        begin
+               endgame <= 1; // pass endgame flag
+        end
     end
     
     always @(*)
     begin
         score = s; // assign score
+        lives1 = L1;
+        lives2 = L2;
     end    
     
 endmodule
