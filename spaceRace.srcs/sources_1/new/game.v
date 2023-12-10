@@ -77,9 +77,9 @@ module game(
     wire [2:0] wall1,wall2;
     assign keycode1 = keycode;
     
-    wire player1, player2;
-    assign player1 = animate;
-    assign player2 = mode == (2'b01  || 2'b10 || 2'b11) ? animate : 0;
+//    wire player1, player2;
+//    assign player1 = animate;
+//    assign player2 = mode == (2'b01  || 2'b10 || 2'b11) ? animate : 0;
            
     always @(posedge CLK)
     begin
@@ -129,7 +129,7 @@ module game(
         .endgame(endgame|!mode),
         .i_clk(CLK), 
         .i_ani_stb(pix_stb),
-        .i_animate(player1),
+        .i_animate(animate),
         .keycode(keycode),
         .o_x1(sq_b_x1),
         .o_x2(sq_b_x2),

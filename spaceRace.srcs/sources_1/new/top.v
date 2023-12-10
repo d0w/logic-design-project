@@ -53,8 +53,7 @@ module top(
     wire slow_clk; // 7-segment clock 
     
     wire endgame; // game over flag
-    wire mode; // mode 0 - start menu, 1 - pong game
-    assign mode = 1;
+    wire [1:0] mode; // mode 0 - start menu, 1 - pong 
     assign endgame = 0;
     
     wire [31:0]keycode;
@@ -80,9 +79,9 @@ module top(
     score_to_7seg lives(.clk(slow_clk), .currscore(p1Lives),.currscore2(p2Lives), .anode(c_anode), .segment(c_seg)); // current score to 7-segment display
 //    score_to_7seg highest(.clk(slow_clk), .currscore(highest_score), .anode(h_anode), .segment(h_seg)); // high score to 7-segment display
     
-//    increment_one change_mode(.CLK(CLK), .btn(BTNC), .duty(mode)); // change mode
+    incrementer change_mode(.CLK(CLK), .btn(BTNC), .duty(mode)); // change mode
     
-    always @(*)
+     always @(*)
     begin
         case(mode)
             0: begin
@@ -97,10 +96,11 @@ module top(
                      {AN, VGA_R, VGA_G, VGA_B, VGA_HS, VGA_VS} = {8'b11111111 ,vga_r_end, vga_g_end, vga_b_end, vga_h_end, vga_v_end}; // game over screen
                 end
             end
+            2: {seg, AN, VGA_R, VGA_G, VGA_B, VGA_HS, VGA_VS} = {c_seg, c_anode, vga_r, vga_g, vga_b, vga_hs, vga_vs}; // pong game
+            3: {seg, AN, VGA_R, VGA_G, VGA_B, VGA_HS, VGA_VS} = {c_seg, c_anode, vga_r, vga_g, vga_b, vga_hs, vga_vs}; // pong game
         endcase
     
     end
-    
     
 
 endmodule
