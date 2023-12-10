@@ -34,36 +34,37 @@ and a non-functioning high score counter along with a ball and ball collision. W
 - A USB keyboard should be connected to the FPGA
 
 ## Code Structure:
-`top.v
+top.v
 
--> game.v
+> game.v
 
-    -> vga640x480.v
+>> vga640x480.v
     
-    -> rocket.v
+>> rocket.v
     
-    -> square.v
+>> square.v
     
-        -> debounce.v
+>>> debounce.v
         
--> PS2Receiver.v
+> PS2Receiver.v
 
--> clock_divider.v
+> clock_divider.v
 
--> menu_screen.v
+> menu_screen.v
 
-    -> vga640x480.v
+>> vga640x480.v
     
-    -> sram.v
+>> sram.v
     
--> bg_gen.v (end_screen)
+> bg_gen.v (end_screen)
 
--> incrementer.v
+>incrementer.v
 
-    -> debounce.v
+>> debounce.v
     
--> score_to_7seg
-`
+> score_to_7seg
+
+
 
 ### top.v: 
 We have a top module that houses the "keyboard" "clock divider" "game screen" "menu screen" "7-segment-display" modules
