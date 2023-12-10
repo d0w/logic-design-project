@@ -4,7 +4,8 @@
 
 ## Project Demo:
 
-## Overview: We built on top of the 2020 EC311 pong project which was a one player pong. The previous project included a single paddle 
+## Overview: 
+We built on top of the 2020 EC311 pong project which was a one player pong. The previous project included a single paddle 
 and a non-functioning high score counter along with a ball and ball collision. We expanded on top of this by 
 - Adding 2 players with (1 paddle for each)
 - Changed the orientation of the game to be horizontal (like the original Pong instead of vertical like the previous project)
