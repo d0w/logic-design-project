@@ -21,9 +21,9 @@
 
 
 module debouncer(
-    input clk,
-    input I0,
-    input I1,
+    input wire clk,
+    input wire I0,
+    input wire I1,
     output reg O0,
     output reg O1
     );

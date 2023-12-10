@@ -25,6 +25,7 @@ module game(
     input wire CLK, // 100 Mhz clock
     input wire [7:0] keycode, // left and up buttons
     input wire [1:0] BTN_LU,
+//    input wire BTN_RST,
     input wire [1:0] BTN_DR,
     output wire VGA_HS, // horizontal sync
     output wire VGA_VS, // vertical sync
@@ -75,6 +76,7 @@ module game(
     wire [1:0] com1; // bits to check rocket direction
     wire [7:0] keycode1;
     wire [2:0] wall1,wall2;
+    wire score;
     assign keycode1 = keycode;
     
 //    wire player1, player2;
@@ -140,7 +142,7 @@ module game(
         ); // rocket instance
         
       rocket2 #(.P_WIDTH(RW), .P_HEIGHT(RH), .IX(RX1), .IY(RY)) R2(
-        .endgame(player2),
+        .endgame(endgame | !mode),
         .i_clk(CLK), 
         .i_ani_stb(pix_stb),
         .i_animate(animate),
@@ -196,6 +198,7 @@ module game(
         .wall2(wall2),
         .lives1(lives1),
         .lives2(lives2)
+//        .RST(BTN_RST)
     ); // ball instance
     
 //    square #(.PY(RY), .PH(RH), .IX(30), .IY(340), .H_SIZE(B_SIZE)) b1 (

@@ -42,7 +42,8 @@ module rocket
     output reg [11:0] o_y2,   // square bottom edge
     output wire active,     // active button flag
     output wire [7:0] com,  // paddle direction
-    output reg [8:0] lives
+    output reg [8:0] lives,
+    output reg [2:0] hold 
     );
     
     assign com = keycode; // pass paddle direction to output
@@ -75,8 +76,11 @@ module rocket
                 btnPress <= 3;
                 movement <= 0;
             end
-           else
+            else if (keycode == 8'h23 & o_y1>=10) begin// down button pressed
                 btnPress <= 4;
+            end
+           else
+                btnPress <= 5;
             end 
         else
         btnPress <= 0;
@@ -101,6 +105,7 @@ module rocket
         o_y1 = y - P_HEIGHT;  // top edge
         o_y2 = y + P_HEIGHT;  // bottom edge
         
+        hold = btnPress;
         lives = L;
     end
     

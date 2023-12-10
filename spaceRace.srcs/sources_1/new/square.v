@@ -56,11 +56,12 @@ module square_4 #(
     output reg [2:0] wall2,
     output reg [8:0] lives1,
     output reg [8:0] lives2
+//    output reg RST
     );
     
     reg [8:0] s;
-    reg [8:0] L1 = 9;
-    reg [8:0] L2 = 9;
+    reg [8:0] L1 = 5;
+    reg [8:0] L2 = 5;
     reg [11:0] x = IX;   // horizontal position of square centre
     reg [11:0] y = IY;   // vertical position of square centre
     reg y_dir = IY_DIR;  // vertical animation direction
@@ -100,7 +101,11 @@ module square_4 #(
         if (x <= H_SIZE + 1 && toggle)  // on reset return to starting position
         begin
           
-            L1 = L1 - 1;
+            L2 = L2 - 1;
+                if (L2==0)
+            begin
+               endgame <= 1; // pass endgame flag
+            end
             x <= IX; // intialize ball to starting x
             y <= IY; // initialize ball to starting y
             x_dir <= ctr; // initialize ball x direction
@@ -110,7 +115,12 @@ module square_4 #(
         end
        if (x >= D_WIDTH- H_SIZE - 1 && toggle)  // on reset return to starting position
         begin
-            L2 = L2 - 1;
+            L1 = L1 - 1;
+             if (L1==0)
+             begin
+               endgame <= 1; // pass endgame flag
+                end
+            
             x <= IX; // intialize ball to starting x
             y <= IY; // initialize ball to starting y
             x_dir <= ctr; // initialize ball x direction
@@ -199,15 +209,12 @@ module square_4 #(
 //            s = s + 1; // increment score
 //        else if (endgame | !mode) // if game ended or not in correct mode
 //            s = 0; // assign score to zero
-        if (L1==0)
-        begin
-               endgame <= 1; // pass endgame flag
-        end
-        
-        if (L2==0)
-        begin
-               endgame <= 1; // pass endgame flag
-        end
+//        if(RST)
+//        begin
+//            endgame = 0;
+//            L1 = 5;
+//            L2 = 5;
+//        end
     end
     
     always @(*)

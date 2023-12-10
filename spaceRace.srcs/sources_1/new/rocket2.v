@@ -75,8 +75,11 @@ module rocket2
                 btnPress <= 3;
                 movement <= 0;
             end
-           else
+           else if (keycode == 8'h74 & o_y1>=10) begin// down button pressed
                 btnPress <= 4;
+            end
+           else
+                btnPress <= 5;
             end 
         else
         btnPress <= 0;
