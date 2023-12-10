@@ -193,7 +193,9 @@ module game(
         .endgame(endgame),
         .score(score),
         .wall1(wall1),
-        .wall2(wall2)
+        .wall2(wall2),
+        .lives1(lives1),
+        .lives2(lives2)
     ); // ball instance
     
 //    square #(.PY(RY), .PH(RH), .IX(30), .IY(340), .H_SIZE(B_SIZE)) b1 (
