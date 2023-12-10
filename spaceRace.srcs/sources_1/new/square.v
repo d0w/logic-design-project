@@ -59,8 +59,8 @@ module square_4 #(
     );
     
     reg [8:0] s;
-    reg [8:0] L1 = 5;
-    reg [8:0] L2 = 5;
+    reg [8:0] L1 = 9;
+    reg [8:0] L2 = 9;
     reg [11:0] x = IX;   // horizontal position of square centre
     reg [11:0] y = IY;   // vertical position of square centre
     reg y_dir = IY_DIR;  // vertical animation direction
