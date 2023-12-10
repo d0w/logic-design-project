@@ -21,14 +21,14 @@ and a non-functioning high score counter along with a ball and ball collision. W
 - Altered the colors of the game based on the current mode that the player selects
 
 ## Steps to run:
-1 - Download GitHub code
-2 - Add source files and memory files into your own Verilog project
-3 - Set the "top" module as the top module
-4 - Synthesize, implement, and generate the bitstream
-5 - Program the FPGA with the code.
-6 - Press the center button (N17) to switch modes/start the game
-7 - Buttons 'W' 'S' and 'A' control up/down/stop movement for player 1
-8 - Buttons 'UP' 'DOWN' and 'LEFT' control up/down/stop movement for player 2
+1. Download GitHub code
+2. Add source files and memory files into your own Verilog project
+3. Set the "top" module as the top module
+4. Synthesize, implement, and generate the bitstream
+5. Program the FPGA with the code.
+6. Press the center button (N17) to switch modes/start the game
+7. Buttons 'W' 'S' and 'A' control up/down/stop movement for player 1
+8. Buttons 'UP' 'DOWN' and 'LEFT' control up/down/stop movement for player 2
 ### Notes:
 - The FPGA should be connected via VGA to an external display
 - A USB keyboard should be connected to the FPGA
