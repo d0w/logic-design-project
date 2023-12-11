@@ -22,7 +22,7 @@ and a non-functioning high score counter along with a ball and ball collision. W
 ## Steps to run:
 1. Download GitHub code
 
-  -> `git clone https://github.com/d0w/logic-design-project`
+  `git clone https://github.com/d0w/logic-design-project`
 
 2. Add source files and memory files into your own Verilog project
 3. Set the "top" module as the top module
