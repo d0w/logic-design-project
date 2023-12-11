@@ -13,8 +13,7 @@ and a non-functioning high score counter along with a ball and ball collision. W
 - Adapted board buttons to change the mode
 - Added modes
   - Mode 1: Original 2-player pong with lives
-  - Mode 2: Easy mode 2-player pong where each player is fighting against themselves attempting to last the longest.
-  - Mode 3: 
+  - Mode 2: Easy/practice mode 2-player pong where each player is fighting against themselves attempting to last the longest. You can switch back to normal Pong once finished.
 - *Implemented our own collision logic, we did not use the original collision logic*
 - Altered scoring to be lives-based instead of score-based
 - Implementing the lives of the two players onto the 7-segment displays
