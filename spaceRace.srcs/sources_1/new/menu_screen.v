@@ -63,17 +63,8 @@ module menu_screen (
         .o_active(active)
     ); // vga 640x480 driver
     
-//     start_square #(.IX(IX), .IY(IY), .H_SIZE(B_SIZE)) ball (
-//        .i_clk(CLK), 
-//        .i_ani_stb(pix_stb),
-//        .i_animate(animate),
-//        .o_x1(sq_a_x1),
-//        .o_x2(sq_a_x2),
-//        .o_y1(sq_a_y1),
-//        .o_y2(sq_a_y2)
-//    ); // ball instance
-    
-localparam SCREEN_WIDTH = 640; // screen width
+
+    localparam SCREEN_WIDTH = 640; // screen width
     localparam SCREEN_HEIGHT = 480; // screen height
     localparam VRAM_DEPTH = SCREEN_WIDTH * SCREEN_HEIGHT; 
     localparam VRAM_A_WIDTH = 18;  // 2^19 > 640 x 480
@@ -102,12 +93,6 @@ localparam SCREEN_WIDTH = 640; // screen width
         $display("Loading palette.");
         $readmemh("over_palette.mem", palette);  // bitmap palette to load
     end    
-    
-    
-//    always @(*)
-//    begin 
-//        sq_a = ((x > sq_a_x1) & (y > sq_a_y1) & (x < sq_a_x2) & (y < sq_a_y2)) ? 1 : 0; // draw ball edges
-//    end
     
 
      
