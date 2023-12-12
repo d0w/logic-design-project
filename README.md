@@ -1,4 +1,6 @@
-# Project Name: Pongfinity
+# Project Name: Pongfinity (old)
+
+**Please go [here](https://github.com/LouisJimenezHernandez/ec311-final-project) for the new repo
 
 ## Team Members: Derek Xu, Koen Lin, Louis Jimenez Hernandez, Jivesh Jain
 
